@@ -8,10 +8,10 @@ export interface User {
 }
 
 export interface UserStats {
-  followersCount: number;
+  followerCount: number;
   followingCount: number;
-  videosCount: number;
-  likesCount: number;
+  videoCount: number;
+  totalLikes: number;
 }
 
 export interface Video {

@@ -39,7 +39,6 @@ export default function ProfilePage() {
       // Load user data
       const userData = await usersAPI.getUserByUsername(username);
       setUser(userData);
-      console.log("Loaded user data:", userData);
 
       // Load user's videos
       const userVideos = await videosAPI.getVideosByUser(userData.id);
@@ -47,7 +46,10 @@ export default function ProfilePage() {
 
       // Load user stats
       const userStats = await usersAPI.getUserStats(userData.id);
+      console.log(userStats);
       setStats(userStats);
+
+      console.log(stats);
 
       // Check if current user is following this user
       if (currentUser && currentUser.id !== userData.id) {
@@ -82,9 +84,9 @@ export default function ProfilePage() {
       if (stats) {
         setStats({
           ...stats,
-          followersCount: response.isFollowing
-            ? stats.followersCount + 1
-            : stats.followersCount - 1,
+          followerCount: response.isFollowing
+            ? stats.followerCount + 1
+            : stats.followerCount - 1,
         });
       }
     } catch (error) {
@@ -181,7 +183,7 @@ export default function ProfilePage() {
                 <div className="flex justify-center sm:justify-start space-x-6 mb-4">
                   <div className="text-center">
                     <div className="font-bold text-lg">
-                      {formatCount(stats.followersCount)}
+                      {formatCount(stats.followerCount)}
                     </div>
                     <div className="text-sm text-gray-600">Followers</div>
                   </div>
@@ -193,13 +195,13 @@ export default function ProfilePage() {
                   </div>
                   <div className="text-center">
                     <div className="font-bold text-lg">
-                      {formatCount(stats.videosCount)}
+                      {formatCount(stats.videoCount)}
                     </div>
                     <div className="text-sm text-gray-600">Videos</div>
                   </div>
                   <div className="text-center">
                     <div className="font-bold text-lg">
-                      {formatCount(stats.likesCount)}
+                      {formatCount(stats.totalLikes)}
                     </div>
                     <div className="text-sm text-gray-600">Likes</div>
                   </div>
