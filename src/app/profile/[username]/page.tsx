@@ -37,12 +37,15 @@ export default function ProfilePage() {
       setLoading(true);
 
       // Load user data
+      console.log(`Loading profile for username: ${username}`);
       const userData = await usersAPI.getUserByUsername(username);
+      console.log(userData);
       setUser(userData);
 
       // Load user's videos
       const userVideos = await videosAPI.getVideosByUser(userData.id);
       setVideos(userVideos);
+      console.log(userVideos);
 
       // Load user stats
       const userStats = await usersAPI.getUserStats(userData.id);
@@ -62,7 +65,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error loading user profile:", error);
       // Handle user not found
-      router.push("/404");
+      // router.push("/404");
     } finally {
       setLoading(false);
     }

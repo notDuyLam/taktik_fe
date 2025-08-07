@@ -7,12 +7,15 @@ import {
   MagnifyingGlassIcon,
   UserIcon,
   Cog6ToothIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeSolidIcon,
   UserIcon as UserSolidIcon,
 } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
+import AuthModal from "./AuthModal";
+import VideoUpload from "./VideoUpload";
 
 interface SidebarProps {
   currentPage?: "home" | "search" | "profile" | "settings";
@@ -22,6 +25,8 @@ export default function Sidebar({ currentPage = "home" }: SidebarProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -63,6 +68,11 @@ export default function Sidebar({ currentPage = "home" }: SidebarProps) {
       : []),
   ];
 
+  const handleUploadSuccess = () => {
+    // Refresh the page or update state as needed
+    window.location.reload();
+  };
+
   return (
     <div className="w-16 lg:w-64 bg-white border-l border-gray-200 flex flex-col">
       {/* Logo */}
@@ -103,6 +113,21 @@ export default function Sidebar({ currentPage = "home" }: SidebarProps) {
             );
           })}
         </ul>
+
+        {/* Upload Button - only show if user is authenticated */}
+        {user && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <button
+              onClick={() => setShowUploadModal(true)}
+              className="w-full flex items-center px-3 py-3 rounded-lg text-left transition-colors bg-red-500 text-white hover:bg-red-600"
+            >
+              <PlusIcon className="w-6 h-6 flex-shrink-0" />
+              <span className="hidden lg:block ml-3 font-medium">
+                Upload Video
+              </span>
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* User Section */}
@@ -166,7 +191,7 @@ export default function Sidebar({ currentPage = "home" }: SidebarProps) {
         ) : (
           <div className="text-center lg:text-left">
             <button
-              onClick={() => handleNavigation("/auth")}
+              onClick={() => setShowAuthModal(true)}
               className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
             >
               <span className="hidden lg:inline">Sign In</span>
@@ -183,6 +208,19 @@ export default function Sidebar({ currentPage = "home" }: SidebarProps) {
         <div
           className="fixed inset-0 z-40"
           onClick={() => setShowUserMenu(false)}
+        />
+      )}
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
+      )}
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <VideoUpload
+          onClose={() => setShowUploadModal(false)}
+          onUploadSuccess={handleUploadSuccess}
         />
       )}
     </div>

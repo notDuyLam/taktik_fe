@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Video } from '@/types';
-import { videosAPI } from '@/lib/api';
-import VideoPlayer from '@/components/VideoPlayer';
-import Sidebar from '@/components/Sidebar';
-import AuthModal from '@/components/AuthModal';
+import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Video } from "@/types";
+import { videosAPI } from "@/lib/api";
+import VideoPlayer from "@/components/VideoPlayer";
+import Sidebar from "@/components/Sidebar";
+import AuthModal from "@/components/AuthModal";
+import VideoUpload from "@/components/VideoUpload";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [videosLoading, setVideosLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export default function Home() {
       if (!user) return;
       setVideosLoading(true);
       const feedVideos = await videosAPI.getFeedForUser(user.id);
-      
+
       // If user has no feed, show trending videos
       if (feedVideos.length === 0) {
         const trendingVideos = await videosAPI.getTrendingVideos();
@@ -41,7 +44,7 @@ export default function Home() {
         setVideos(feedVideos);
       }
     } catch (error) {
-      console.error('Error loading user feed:', error);
+      console.error("Error loading user feed:", error);
       // Fallback to trending videos
       loadTrendingVideos();
     } finally {
@@ -55,7 +58,7 @@ export default function Home() {
       const trendingVideos = await videosAPI.getTrendingVideos();
       setVideos(trendingVideos);
     } catch (error) {
-      console.error('Error loading trending videos:', error);
+      console.error("Error loading trending videos:", error);
     } finally {
       setVideosLoading(false);
     }
@@ -67,11 +70,20 @@ export default function Home() {
     }
   };
 
-  const handleScroll = (direction: 'up' | 'down') => {
-    if (direction === 'up' && currentVideoIndex > 0) {
+  const handleScroll = (direction: "up" | "down") => {
+    if (direction === "up" && currentVideoIndex > 0) {
       setCurrentVideoIndex(currentVideoIndex - 1);
-    } else if (direction === 'down' && currentVideoIndex < videos.length - 1) {
+    } else if (direction === "down" && currentVideoIndex < videos.length - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
+    }
+  };
+
+  const handleUploadSuccess = () => {
+    // Reload videos after successful upload
+    if (user) {
+      loadUserFeed();
+    } else {
+      loadTrendingVideos();
     }
   };
 
@@ -85,8 +97,14 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen bg-black">
+      {/* Sidebar */}
+      <Sidebar />
       {/* Main video feed */}
-      <div className="flex-1 relative">
+      <div
+        className="flex-1 relative
+      
+      "
+      >
         {videos.length > 0 ? (
           <VideoPlayer
             video={videos[currentVideoIndex]}
@@ -99,10 +117,9 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-2xl mb-4">No videos found</h2>
               <p className="text-gray-400">
-                {!user 
-                  ? 'Sign up to see personalized content!' 
-                  : 'Follow some users to see their videos in your feed!'
-                }
+                {!user
+                  ? "Sign up to see personalized content!"
+                  : "Follow some users to see their videos in your feed!"}
               </p>
               {!user && (
                 <button
@@ -117,12 +134,26 @@ export default function Home() {
         )}
       </div>
 
-      {/* Sidebar */}
-      <Sidebar />
+      {/* Floating Upload Button - only show for authenticated users */}
+      {user && (
+        <button
+          onClick={() => setShowUploadModal(true)}
+          className="fixed bottom-6 right-6 w-14 h-14 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors z-40 flex items-center justify-center lg:hidden"
+          title="Upload Video"
+        >
+          <PlusIcon className="w-8 h-8" />
+        </button>
+      )}
 
       {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal onClose={() => setShowAuthModal(false)} />
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <VideoUpload
+          onClose={() => setShowUploadModal(false)}
+          onUploadSuccess={handleUploadSuccess}
+        />
       )}
     </div>
   );

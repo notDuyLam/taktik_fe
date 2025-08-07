@@ -30,6 +30,14 @@ const getAuthHeaders = () => {
   };
 };
 
+// Helper function to get auth headers for form data
+const getAuthHeadersFormData = () => {
+  const token = localStorage.getItem("token");
+  return {
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
+
 // Generic API request function
 async function apiRequest<T>(
   endpoint: string,
@@ -148,6 +156,21 @@ export const videosAPI = {
 
   getPopularVideos: (minViews: number = 1000): Promise<Video[]> =>
     apiRequest(`/api/videos/popular?minViews=${minViews}`),
+
+  uploadVideo: async (formData: FormData): Promise<Video> => {
+    const url = `${API_BASE_URL}/api/videos/upload`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: getAuthHeadersFormData(),
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  },
 };
 
 // Comments API
