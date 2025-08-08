@@ -238,30 +238,33 @@ export default function VideoPlayer({
         }
       }}
     >
-      {/* Video */}
-      <video
-        ref={videoRef}
-        className="w-full h-full object-contain cursor-pointer"
-        src={video.videoUrl}
-        loop
-        muted
-        playsInline
-        onClick={handleVideoClick}
-        onEnded={onVideoEnd}
-        onTimeUpdate={handleVideoTimeUpdate}
-      />
+      {/* Constrain to 9:16 frame centered on the screen */}
+      <div className="relative h-full aspect-[9/16] mx-auto bg-black">
+        {/* Video */}
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-contain cursor-pointer"
+          src={video.videoUrl}
+          loop
+          muted
+          playsInline
+          onClick={handleVideoClick}
+          onEnded={onVideoEnd}
+          onTimeUpdate={handleVideoTimeUpdate}
+        />
 
-      {/* Play overlay */}
-      {!isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center" onClick={handleVideoClick}>
-          <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-            <PlayIcon className="w-8 h-8 text-white" />
+        {/* Play overlay */}
+        {!isPlaying && (
+          <div className="absolute inset-0 flex items-center justify-center" onClick={handleVideoClick}>
+            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+              <PlayIcon className="w-8 h-8 text-white" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Video info (no border) */}
-      <div className="absolute bottom-0 left-0 right-16 p-4 bg-gradient-to-t from-black/80 to-transparent">
+      {/* Video info (no border) anchored to screen left */}
+      <div className="absolute bottom-0 left-0 right-20 p-4 bg-gradient-to-t from-black/80 to-transparent z-10">
         <div className="mb-2">
           <h3 className="text-white text-lg font-semibold">{video.title}</h3>
           {video.description && (
@@ -289,8 +292,8 @@ export default function VideoPlayer({
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="absolute right-4 bottom-24 flex flex-col items-center space-y-4 p-2 rounded-2xl bg-black/30 border border-white/15 backdrop-blur-md">
+      {/* Action buttons anchored to screen right */}
+      <div className="absolute right-4 bottom-24 flex flex-col items-center space-y-4 p-2 rounded-2xl bg-black/30 border border-white/15 backdrop-blur-md z-10">
         {/* Like button */}
         <div className="flex flex-col items-center">
           <Button

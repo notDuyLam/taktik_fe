@@ -166,7 +166,7 @@ export default function Home() {
       {/* Sidebar */}
       <Sidebar />
       {/* Main video feed */}
-      <div className="flex-1 relative">
+      <div className={`flex-1 relative ${selectedVideo ? "" : "overflow-y-auto"}`}>
         {/* Selected video at the top if present */}
         {selectedVideoLoading ? (
           <div className="flex flex-col items-center justify-center h-96 text-foreground">

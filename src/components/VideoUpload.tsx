@@ -51,10 +51,10 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
         return;
       }
 
-      // Validate file size (50MB limit)
-      const maxSize = 50 * 1024 * 1024; // 50MB
+      // Validate file size (40MB limit)
+      const maxSize = 40 * 1024 * 1024; // 40MB
       if (file.size > maxSize) {
-        setError("Video file size must be less than 50MB");
+        setError("Video file size must be less than 40MB");
         return;
       }
 
@@ -206,7 +206,7 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
                   Click to upload video
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  MP4, MOV, AVI up to 50MB
+                  MP4, MOV, AVI up to 40MB
                 </p>
               </div>
             ) : (
