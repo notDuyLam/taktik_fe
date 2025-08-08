@@ -264,27 +264,27 @@ export default function VideoPlayer({
       </div>
 
       {/* Video info (no border) anchored to screen left */}
-      <div className="absolute bottom-0 left-0 right-20 p-4 bg-gradient-to-t from-black/80 to-transparent z-10">
-        <div className="mb-2">
-          <h3 className="text-white text-lg font-semibold">{video.title}</h3>
+      <div className="absolute bottom-0 left-0 right-20 px-6 pb-6 pt-8 bg-gradient-to-t from-black/80 to-transparent z-10">
+        <div className="mb-3">
+          <h3 className="text-white text-xl font-semibold leading-tight">{video.title}</h3>
           {video.description && (
-            <p className="text-white text-sm opacity-90 mt-1">
+            <p className="text-white text-sm opacity-90 mt-2">
               {video.description}
             </p>
           )}
         </div>
-        <div className="flex items-center">
-          <Avatar className="w-10 h-10 mr-3">
+        <div className="flex items-center gap-3">
+          <Avatar className="w-10 h-10">
             <AvatarImage src={video.user?.avatarUrl} alt={video.user?.username} />
             <AvatarFallback>{video.user?.username?.[0]?.toUpperCase() || "U"}</AvatarFallback>
           </Avatar>
-          <span className="text-white font-medium">
+          <span className="text-white font-semibold truncate">
             {video.user?.username || "Unknown User"}
           </span>
           {user && video.user && user.id !== video.user.id && (
             <Button
               onClick={handleFollow}
-              className={`ml-3 px-4 py-1 text-sm rounded-full bg-white/80 text-gray-900 shadow-sm hover:bg-white focus:bg-white/90 focus:outline-none transition-colors border-none ${isFollowing ? 'font-semibold' : ''}`}
+              className={`ml-4 px-4 py-1.5 text-sm rounded-full bg-white/80 text-gray-900 shadow-sm hover:bg-white focus:bg-white/90 focus:outline-none transition-colors border-none ${isFollowing ? 'font-semibold' : ''}`}
             >
               {isFollowing ? "Following" : "Follow"}
             </Button>

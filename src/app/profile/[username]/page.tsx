@@ -189,7 +189,7 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <Card className="rounded-lg shadow p-0 mb-6">
           <CardContent className="p-0">
-            <div className="flex flex-col sm:flex-row sm:items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               {/* Avatar */}
               <div className="flex flex-col items-center sm:items-start p-6 sm:pr-0">
                 <div className="relative">
@@ -199,16 +199,14 @@ export default function ProfilePage() {
                   </Avatar>
                 </div>
               </div>
-              {/* Divider for desktop */}
-              <div className="hidden sm:block h-24 w-px bg-border mx-6" />
               {/* Profile Info */}
-              <div className="flex-1 text-center sm:text-left mt-4 sm:mt-0 px-6 pb-6 sm:pb-0">
-                <h1 className="text-3xl font-bold text-foreground mb-1 break-all">{user.username}</h1>
-                <p className="text-muted-foreground mb-3 text-base">@{user.username}</p>
-                {user.bio && <p className="text-foreground/80 mb-5 text-sm max-w-xl mx-auto sm:mx-0">{user.bio}</p>}
+              <div className="flex-1 text-center sm:text-left mt-0 px-6 pb-6 sm:pb-6 sm:border-l sm:border-border sm:pl-6">
+                <h1 className="text-3xl font-bold text-foreground mb-1 mt-4 break-all">{user.username}</h1>
+                <p className="text-muted-foreground mb-2 text-base">@{user.username}</p>
+                {user.bio && <p className="text-foreground/80 mt-2 mb-4 text-sm max-w-xl mx-auto sm:mx-0">{user.bio}</p>}
                 {/* Stats */}
                 {stats && (
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-4 mb-6 bg-accent rounded-lg px-4 py-3 border border-border">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5 bg-accent rounded-lg p-4 border border-border">
                     <div className="flex flex-col items-center min-w-[70px]">
                       <div className="font-bold text-lg text-foreground">{formatCount(stats.followerCount)}</div>
                       <div className="text-xs text-muted-foreground">Followers</div>
