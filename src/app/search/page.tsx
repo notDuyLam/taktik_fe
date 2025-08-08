@@ -72,7 +72,7 @@ export default function SearchPage() {
   };
 
   const handleVideoClick = (videoId: string) => {
-    router.push(`/video/${videoId}`);
+    router.push(`/?video=${videoId}`);
   };
 
   const formatCount = (count: number): string => {
@@ -85,23 +85,23 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <Sidebar currentPage="search" />
 
       <div className="flex-1 max-w-4xl mx-auto p-6">
         {/* Search Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Search</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-6">Search</h1>
 
           {/* Search Input */}
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for users or videos..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-input bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
             />
           </div>
         </div>
@@ -132,8 +132,8 @@ export default function SearchPage() {
                 <Skeleton className="w-32 h-8 rounded" />
               </div>
             ) : !query.trim() ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <MagnifyingGlassIcon className="w-12 h-12 mb-4 text-gray-300" />
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <MagnifyingGlassIcon className="w-12 h-12 mb-4 text-muted-foreground/60" />
                 <div className="text-lg mb-2">Start typing to search</div>
                 <div className="text-sm">Find users and videos on Taktik</div>
               </div>
@@ -141,17 +141,17 @@ export default function SearchPage() {
               <>
                 {/* Users Results */}
                 {activeTab === "users" && (
-                  <div className="divide-y divide-gray-200">
+                  <div className="divide-y divide-border">
                     {users.length === 0 ? (
                       <div className="flex justify-center py-12">
-                        <div className="text-gray-500">No users found</div>
+                        <div className="text-muted-foreground">No users found</div>
                       </div>
                     ) : (
                       users.map((user) => (
                         <div
                           key={user.id}
                           onClick={() => handleUserClick(user.username)}
-                          className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                          className="p-4 hover:bg-accent cursor-pointer transition-colors"
                         >
                           <div className="flex items-center space-x-4">
                             <Avatar className="w-12 h-12">
@@ -159,14 +159,14 @@ export default function SearchPage() {
                               <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="font-medium text-gray-900">
+                              <div className="font-medium text-foreground">
                                 {user.username}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-muted-foreground">
                                 @{user.username}
                               </div>
                               {user.bio && (
-                                <div className="text-sm text-gray-700 mt-1 truncate">
+                                <div className="text-sm text-foreground/80 mt-1 truncate">
                                   {user.bio}
                                 </div>
                               )}
@@ -182,19 +182,19 @@ export default function SearchPage() {
                   <div>
                     {videos.length === 0 ? (
                       <div className="flex justify-center py-12">
-                        <div className="text-gray-500">No videos found</div>
+                        <div className="text-muted-foreground">No videos found</div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                         {videos.map((video) => (
                           <Card
                             key={video.id}
-                            className="bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                            className="rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                             onClick={() => handleVideoClick(video.id)}
                           >
                             <CardContent className="p-0">
                               {/* Video Thumbnail */}
-                              <div className="aspect-[9/16] bg-gray-200 relative">
+                              <div className="aspect-[9/16] bg-muted relative">
                                 {video.thumbnailUrl ? (
                                   <img
                                     src={video.thumbnailUrl}
@@ -203,7 +203,7 @@ export default function SearchPage() {
                                   />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center">
-                                    <div className="text-gray-400 text-sm">
+                                    <div className="text-muted-foreground text-sm">
                                       No thumbnail
                                     </div>
                                   </div>
@@ -214,15 +214,15 @@ export default function SearchPage() {
                               </div>
                               {/* Video Info */}
                               <div className="p-3">
-                                <h3 className="font-medium text-gray-900 line-clamp-2 mb-1">
+                                <h3 className="font-medium text-foreground line-clamp-2 mb-1">
                                   {video.title}
                                 </h3>
                                 {video.description && (
-                                  <p className="text-sm text-gray-600 line-clamp-2">
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
                                     {video.description}
                                   </p>
                                 )}
-                                <div className="flex items-center mt-2 text-xs text-gray-500">
+                                <div className="flex items-center mt-2 text-xs text-muted-foreground">
                                   <span>
                                     {video.user?.username || "Unknown User"}
                                   </span>

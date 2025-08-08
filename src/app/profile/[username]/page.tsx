@@ -11,6 +11,7 @@ import {
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { UserMinusIcon } from "@heroicons/react/24/solid";
+import { HeartIcon } from "@heroicons/react/24/outline";
 import Sidebar from "@/components/Sidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -30,6 +31,7 @@ export default function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (username) {
@@ -43,12 +45,40 @@ export default function ProfilePage() {
 
       // Load user data
       console.log(`Loading profile for username: ${username}`);
-      const userData = await usersAPI.getUserByUsername(username);
+      const userData: any = await usersAPI.getUserByUsername(username);
       setUser(userData);
 
-      // Load user's videos
-      const userVideos = await videosAPI.getVideosByUser(userData.id);
-      setVideos(userVideos);
+      // Load user's videos (prefer embedded videos from response if available)
+      if (Array.isArray(userData.videos) && userData.videos.length > 0) {
+        const mappedVideos: Video[] = userData.videos.map((v: any) => ({
+          id: v.id,
+          userId: userData.id,
+          title: v.title,
+          description: v.description,
+          videoUrl: v.videoUrl,
+          thumbnailUrl: v.thumbnailUrl,
+          viewCount: v.viewCount ?? 0,
+          createdAt: v.createdAt ?? new Date().toISOString(),
+          user: {
+            id: userData.id,
+            username: userData.username,
+            avatarUrl: userData.avatarUrl,
+            bio: userData.bio,
+            createdAt: userData.createdAt,
+          },
+        }));
+        setVideos(mappedVideos);
+        const counts: Record<string, number> = {};
+        for (const v of userData.videos) {
+          counts[v.id] = Array.isArray(v.likes) ? v.likes.length : 0;
+        }
+        setLikeCounts(counts);
+      } else {
+        // Fallback to existing API
+        const userVideos = await videosAPI.getVideosByUser(userData.id);
+        setVideos(userVideos);
+        // Like counts can be fetched on-demand later if needed
+      }
 
       // Load user stats
       const userStats = await usersAPI.getUserStats(userData.id);
@@ -121,7 +151,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <Sidebar currentPage="profile" />
         <div className="flex-1 flex items-center justify-center">
           <Skeleton className="w-32 h-8 rounded" />
@@ -132,15 +162,15 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center">
-          <Alert variant="default" className="max-w-md mx-auto">
-            <AlertTitle>User not found</AlertTitle>
-            <AlertDescription>
+          <Alert variant="default" className="max-w-md mx-auto p-6">
+            <AlertTitle className="text-lg">User not found</AlertTitle>
+            <AlertDescription className="mt-1">
               The user you are looking for does not exist.
             </AlertDescription>
-            <Button onClick={() => router.push("/")} className="mt-4" variant="default">
+            <Button onClick={() => router.push("/")} className="mt-4 col-start-2 w-full" variant="default">
               Go Home
             </Button>
           </Alert>
@@ -152,48 +182,48 @@ export default function ProfilePage() {
   const isOwnProfile = currentUser?.id === user.id;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <Sidebar currentPage="profile" />
 
       <div className="flex-1 max-w-4xl mx-auto p-6">
         {/* Profile Header */}
-        <Card className="rounded-lg shadow p-0 mb-6 bg-neutral-50 border border-neutral-100">
+        <Card className="rounded-lg shadow p-0 mb-6">
           <CardContent className="p-0">
             <div className="flex flex-col sm:flex-row sm:items-center">
               {/* Avatar */}
               <div className="flex flex-col items-center sm:items-start p-6 sm:pr-0">
                 <div className="relative">
-                  <Avatar className="w-28 h-28 ring-2 ring-neutral-200 shadow-md bg-white">
+                  <Avatar className="w-28 h-28 ring-2 ring-border shadow-md bg-card">
                     <AvatarImage src={user.avatarUrl} alt={user.username} />
                     <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                 </div>
               </div>
               {/* Divider for desktop */}
-              <div className="hidden sm:block h-24 w-px bg-neutral-200 mx-6" />
+              <div className="hidden sm:block h-24 w-px bg-border mx-6" />
               {/* Profile Info */}
               <div className="flex-1 text-center sm:text-left mt-4 sm:mt-0 px-6 pb-6 sm:pb-0">
-                <h1 className="text-3xl font-bold text-gray-900 mb-1 break-all">{user.username}</h1>
-                <p className="text-gray-500 mb-3 text-base">@{user.username}</p>
-                {user.bio && <p className="text-gray-700 mb-5 text-sm max-w-xl mx-auto sm:mx-0">{user.bio}</p>}
+                <h1 className="text-3xl font-bold text-foreground mb-1 break-all">{user.username}</h1>
+                <p className="text-muted-foreground mb-3 text-base">@{user.username}</p>
+                {user.bio && <p className="text-foreground/80 mb-5 text-sm max-w-xl mx-auto sm:mx-0">{user.bio}</p>}
                 {/* Stats */}
                 {stats && (
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-4 mb-6 bg-neutral-100 rounded-lg px-4 py-3 border border-neutral-200">
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-4 mb-6 bg-accent rounded-lg px-4 py-3 border border-border">
                     <div className="flex flex-col items-center min-w-[70px]">
-                      <div className="font-bold text-lg text-gray-900">{formatCount(stats.followerCount)}</div>
-                      <div className="text-xs text-gray-500">Followers</div>
+                      <div className="font-bold text-lg text-foreground">{formatCount(stats.followerCount)}</div>
+                      <div className="text-xs text-muted-foreground">Followers</div>
                     </div>
                     <div className="flex flex-col items-center min-w-[70px]">
-                      <div className="font-bold text-lg text-gray-900">{formatCount(stats.followingCount)}</div>
-                      <div className="text-xs text-gray-500">Following</div>
+                      <div className="font-bold text-lg text-foreground">{formatCount(stats.followingCount)}</div>
+                      <div className="text-xs text-muted-foreground">Following</div>
                     </div>
                     <div className="flex flex-col items-center min-w-[70px]">
-                      <div className="font-bold text-lg text-gray-900">{formatCount(stats.videoCount)}</div>
-                      <div className="text-xs text-gray-500">Videos</div>
+                      <div className="font-bold text-lg text-foreground">{formatCount(stats.videoCount)}</div>
+                      <div className="text-xs text-muted-foreground">Videos</div>
                     </div>
                     <div className="flex flex-col items-center min-w-[70px]">
-                      <div className="font-bold text-lg text-gray-900">{formatCount(stats.totalLikes)}</div>
-                      <div className="text-xs text-gray-500">Likes</div>
+                      <div className="font-bold text-lg text-foreground">{formatCount(stats.totalLikes)}</div>
+                      <div className="text-xs text-muted-foreground">Likes</div>
                     </div>
                   </div>
                 )}
@@ -245,11 +275,11 @@ export default function ProfilePage() {
         </Card>
         {/* Videos Section */}
         <Card className="rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Videos ({videos.length})</h2>
+          <div className="p-6 border-b border-border">
+            <h2 className="text-xl font-bold text-foreground">Videos ({videos.length})</h2>
           </div>
           {videos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <div className="text-lg mb-2">No videos yet</div>
               <div className="text-sm">
                 {isOwnProfile
@@ -276,11 +306,17 @@ export default function ProfilePage() {
                         <div className="text-white text-xs font-semibold truncate">
                           {video.title}
                         </div>
-                        <div className="text-gray-300 text-xs">{video.viewCount} views</div>
+                        <div className="text-gray-300 text-xs flex items-center gap-3">
+                          <span>{video.viewCount} views</span>
+                          <span className="flex items-center gap-1">
+                            <HeartIcon className="w-3 h-3" />
+                            {likeCounts[video.id] ?? 0}
+                          </span>
+                        </div>
                       </div>
                     </>
                   ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-gray-200 text-gray-400 text-xs text-center p-2">
+                    <div className="flex items-center justify-center w-full h-full bg-muted text-muted-foreground text-xs text-center p-2">
                       {video.title}
                     </div>
                   )}

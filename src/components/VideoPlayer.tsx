@@ -15,10 +15,11 @@ import {
   UserMinusIcon,
 } from "@heroicons/react/24/solid";
 import CommentSection from "@/components/CommentSection";
-import { Card, CardContent } from "@/components/ui/card";
+// Removed Card/CardContent to avoid default borders on the info overlay
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { PlayIcon } from "@heroicons/react/24/solid";
 
 interface VideoPlayerProps {
   video: Video;
@@ -188,10 +189,21 @@ export default function VideoPlayer({
   };
 
   const handleWheel = (e: React.WheelEvent) => {
+    // Prevent page from scrolling while using the player
+    e.preventDefault();
+    e.stopPropagation();
     if (e.deltaY > 0) {
       onScroll("down");
     } else {
       onScroll("up");
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    // Block scroll gestures from bubbling to page when player is active
+    if (!showComments) {
+      e.preventDefault();
+      e.stopPropagation();
     }
   };
 
@@ -206,8 +218,25 @@ export default function VideoPlayer({
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden"
+      className="relative w-full h-screen overflow-hidden overscroll-none"
       onWheel={handleWheel}
+      onTouchMove={handleTouchMove}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        // prevent window scroll and handle navigation/controls
+        if (e.code === "Space" || e.key === " ") {
+          e.preventDefault();
+          handleVideoClick();
+        }
+        if (e.key === "ArrowDown" || e.key === "PageDown") {
+          e.preventDefault();
+          onScroll("down");
+        }
+        if (e.key === "ArrowUp" || e.key === "PageUp") {
+          e.preventDefault();
+          onScroll("up");
+        }
+      }}
     >
       {/* Video */}
       <video
@@ -222,62 +251,65 @@ export default function VideoPlayer({
         onTimeUpdate={handleVideoTimeUpdate}
       />
 
-      {/* Play/Pause indicator */}
+      {/* Play overlay */}
       {!isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-20 h-20 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
-            <div className="w-0 h-0 border-l-8 border-l-white border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
+        <div className="absolute inset-0 flex items-center justify-center" onClick={handleVideoClick}>
+          <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+            <PlayIcon className="w-8 h-8 text-white" />
           </div>
         </div>
       )}
 
-      {/* Video info */}
-      <Card className="absolute bottom-0 left-0 right-16 p-4 bg-gradient-to-t from-black to-transparent">
-        <CardContent className="p-0">
-          <div className="mb-2">
-            <h3 className="text-white text-lg font-semibold">{video.title}</h3>
-            {video.description && (
-              <p className="text-white text-sm opacity-90 mt-1">
-                {video.description}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center">
-            <Avatar className="w-10 h-10 mr-3">
-              <AvatarImage src={video.user?.avatarUrl} alt={video.user?.username} />
-              <AvatarFallback>{video.user?.username?.[0]?.toUpperCase() || "U"}</AvatarFallback>
-            </Avatar>
-            <span className="text-white font-medium">
-              {video.user?.username || "Unknown User"}
-            </span>
-            {user && video.user && user.id !== video.user.id && (
-              <Button
-                onClick={handleFollow}
-                className={`ml-3 px-4 py-1 text-sm rounded-full bg-white/80 text-gray-900 shadow-sm hover:bg-white focus:bg-white/90 focus:outline-none transition-colors border-none ${isFollowing ? 'font-semibold' : ''}`}
-              >
-                {isFollowing ? "Following" : "Follow"}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Video info (no border) */}
+      <div className="absolute bottom-0 left-0 right-16 p-4 bg-gradient-to-t from-black/80 to-transparent">
+        <div className="mb-2">
+          <h3 className="text-white text-lg font-semibold">{video.title}</h3>
+          {video.description && (
+            <p className="text-white text-sm opacity-90 mt-1">
+              {video.description}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center">
+          <Avatar className="w-10 h-10 mr-3">
+            <AvatarImage src={video.user?.avatarUrl} alt={video.user?.username} />
+            <AvatarFallback>{video.user?.username?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+          </Avatar>
+          <span className="text-white font-medium">
+            {video.user?.username || "Unknown User"}
+          </span>
+          {user && video.user && user.id !== video.user.id && (
+            <Button
+              onClick={handleFollow}
+              className={`ml-3 px-4 py-1 text-sm rounded-full bg-white/80 text-gray-900 shadow-sm hover:bg-white focus:bg-white/90 focus:outline-none transition-colors border-none ${isFollowing ? 'font-semibold' : ''}`}
+            >
+              {isFollowing ? "Following" : "Follow"}
+            </Button>
+          )}
+        </div>
+      </div>
 
       {/* Action buttons */}
-      <div className="absolute right-4 bottom-20 flex flex-col items-center space-y-6">
+      <div className="absolute right-4 bottom-24 flex flex-col items-center space-y-4 p-2 rounded-2xl bg-black/30 border border-white/15 backdrop-blur-md">
         {/* Like button */}
         <div className="flex flex-col items-center">
           <Button
             onClick={handleLike}
-            className="w-12 h-12 flex items-center justify-center"
-            variant={isLiked ? "default" : "outline"}
+            aria-label={isLiked ? "Unlike" : "Like"}
+            className={`size-12 rounded-full border transition-colors duration-150 flex items-center justify-center shadow-sm ${
+              isLiked
+                ? "bg-red-500 hover:bg-red-500/90 border-red-500/60 text-white"
+                : "bg-white/10 hover:bg-white/20 border-white/20 text-white"
+            }`}
+            variant="ghost"
           >
             {isLiked ? (
-              <HeartSolidIcon className="w-8 h-8" />
+              <HeartSolidIcon className="size-6" />
             ) : (
-              <HeartIcon className="w-8 h-8" />
+              <HeartIcon className="size-6" />
             )}
           </Button>
-          <span className="text-white text-xs mt-1">
+          <span className={`text-xs mt-1 ${isLiked ? "text-red-300" : "text-white/80"}`}>
             {formatCount(stats.likeCount)}
           </span>
         </div>
@@ -285,12 +317,13 @@ export default function VideoPlayer({
         <div className="flex flex-col items-center">
           <Button
             onClick={() => setShowComments(true)}
-            className="w-12 h-12 flex items-center justify-center"
-            variant="outline"
+            aria-label="Open comments"
+            className="size-12 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white flex items-center justify-center shadow-sm transition-colors duration-150"
+            variant="ghost"
           >
-            <ChatBubbleOvalLeftIcon className="w-8 h-8" />
+            <ChatBubbleOvalLeftIcon className="size-6" />
           </Button>
-          <span className="text-white text-xs mt-1">
+          <span className="text-white/80 text-xs mt-1">
             {formatCount(stats.commentCount)}
           </span>
         </div>
@@ -298,24 +331,30 @@ export default function VideoPlayer({
         <div className="flex flex-col items-center">
           <Button
             onClick={handleShare}
-            className="w-12 h-12 flex items-center justify-center"
-            variant="outline"
+            aria-label="Share video"
+            className="size-12 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white flex items-center justify-center shadow-sm transition-colors duration-150"
+            variant="ghost"
           >
-            <ShareIcon className="w-8 h-8" />
+            <ShareIcon className="size-6" />
           </Button>
-          <span className="text-white text-xs mt-1">Share</span>
+          <span className="text-white/80 text-xs mt-1">Share</span>
         </div>
         {/* Follow button (circular) */}
         {user && video.user && user.id !== video.user.id && (
           <Button
             onClick={handleFollow}
-            className="w-12 h-12 flex items-center justify-center rounded-full"
-            variant={isFollowing ? "secondary" : "default"}
+            aria-label={isFollowing ? "Unfollow user" : "Follow user"}
+            className={`size-12 rounded-full border flex items-center justify-center shadow-sm transition-colors duration-150 ${
+              isFollowing
+                ? "bg-white text-gray-900 hover:bg-white/90 border-white/80"
+                : "bg-white/10 text-white hover:bg-white/20 border-white/20"
+            }`}
+            variant="ghost"
           >
             {isFollowing ? (
-              <UserMinusIcon className="w-6 h-6" />
+              <UserMinusIcon className="size-5" />
             ) : (
-              <UserPlusIcon className="w-6 h-6" />
+              <UserPlusIcon className="size-5" />
             )}
           </Button>
         )}
@@ -323,7 +362,7 @@ export default function VideoPlayer({
 
       {/* Comments Section */}
       <Dialog open={showComments} onOpenChange={setShowComments}>
-        <DialogContent>
+        <DialogContent className="p-0 sm:max-w-lg w-[calc(100%-2rem)]">
           <CommentSection
             videoId={video.id}
             onClose={() => setShowComments(false)}

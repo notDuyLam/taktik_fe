@@ -3,6 +3,8 @@
 import { useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { videosAPI } from "@/lib/api";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   CloudArrowUpIcon,
   XMarkIcon,
@@ -175,43 +177,35 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">Upload Video</h2>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-            disabled={uploading}
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
-
+    <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Upload Video</DialogTitle>
+          <DialogDescription>Share your video with a title and optional thumbnail.</DialogDescription>
+        </DialogHeader>
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="pt-2">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+              <p className="text-destructive text-sm">{error}</p>
             </div>
           )}
 
           {/* Video Upload */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Video File *
             </label>
             {!videoFile ? (
               <div
                 onClick={() => videoInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-red-400 transition-colors"
+                className="border-2 border-dashed border-input rounded-lg p-8 text-center cursor-pointer hover:border-primary/60 transition-colors bg-muted/30"
               >
-                <CloudArrowUpIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-lg font-medium text-gray-600 mb-2">
+                <CloudArrowUpIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-lg font-medium text-muted-foreground mb-2">
                   Click to upload video
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   MP4, MOV, AVI up to 50MB
                 </p>
               </div>
@@ -227,15 +221,16 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
                     <PlayIcon className="w-16 h-16 text-white opacity-70" />
                   </div>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={removeVideo}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                  className="absolute top-2 right-2 size-6 p-0 rounded-full"
+                  variant="destructive"
                   disabled={uploading}
                 >
                   <XMarkIcon className="w-4 h-4" />
-                </button>
-                <p className="text-sm text-gray-600 mt-2">{videoFile.name}</p>
+                </Button>
+                <p className="text-sm text-muted-foreground mt-2">{videoFile.name}</p>
               </div>
             )}
             <input
@@ -250,40 +245,41 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
 
           {/* Thumbnail Upload */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Thumbnail (Optional)
             </label>
             {!thumbnailFile ? (
               <div
                 onClick={() => thumbnailInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-red-400 transition-colors"
+                className="border-2 border-dashed border-input rounded-lg p-6 text-center cursor-pointer hover:border-primary/60 transition-colors bg-muted/30"
               >
-                <PhotoIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-600 mb-1">
+                <PhotoIcon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm font-medium text-muted-foreground mb-1">
                   Click to upload thumbnail
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   JPG, PNG up to 5MB
                 </p>
               </div>
             ) : (
               <div className="relative">
-                <div className="bg-gray-100 rounded-lg overflow-hidden">
+                <div className="bg-muted rounded-lg overflow-hidden">
                   <img
                     src={thumbnailPreview || ""}
                     alt="Thumbnail preview"
                     className="w-full h-32 object-cover"
                   />
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={removeThumbnail}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                  className="absolute top-2 right-2 size-6 p-0 rounded-full"
+                  variant="destructive"
                   disabled={uploading}
                 >
                   <XMarkIcon className="w-4 h-4" />
-                </button>
-                <p className="text-sm text-gray-600 mt-2">{thumbnailFile.name}</p>
+                </Button>
+                <p className="text-sm text-muted-foreground mt-2">{thumbnailFile.name}</p>
               </div>
             )}
             <input
@@ -300,7 +296,7 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
           <div className="mb-4">
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1"
             >
               Title *
             </label>
@@ -313,10 +309,10 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
               required
               maxLength={100}
               disabled={uploading}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-50"
+              className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:bg-muted/30"
               placeholder="Enter video title"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {formData.title.length}/100 characters
             </p>
           </div>
@@ -325,7 +321,7 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
           <div className="mb-6">
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-foreground mb-1"
             >
               Description
             </label>
@@ -337,10 +333,10 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
               rows={4}
               maxLength={500}
               disabled={uploading}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none disabled:bg-gray-50"
+              className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:bg-muted/30"
               placeholder="Describe your video"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {formData.description.length}/500 characters
             </p>
           </div>
@@ -349,16 +345,16 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
           {uploading && (
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-foreground">
                   Uploading...
                 </span>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   {Math.round(uploadProgress)}%
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
-                  className="bg-red-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-primary h-2 rounded-full transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
@@ -366,15 +362,16 @@ export default function VideoUpload({ onClose, onUploadSuccess }: VideoUploadPro
           )}
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
             disabled={uploading || !videoFile || !formData.title.trim()}
-            className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="w-full"
+            variant="default"
           >
             {uploading ? "Uploading..." : "Upload Video"}
-          </button>
+          </Button>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
