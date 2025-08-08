@@ -59,14 +59,14 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-neutral-50">
       <Sidebar currentPage="settings" />
 
       <div className="flex-1 max-w-4xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-neutral-900 mb-2">Settings</h1>
+          <p className="text-neutral-600">
             Manage your account preferences and privacy settings
           </p>
         </div>
@@ -82,11 +82,12 @@ export default function SettingsPage() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+                      className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:bg-neutral-100 ${
                         activeTab === tab.id
-                          ? "bg-red-50 text-red-600 border border-red-200"
-                          : "text-gray-700 hover:bg-gray-100"
+                          ? "bg-neutral-100 text-neutral-800 border border-neutral-200"
+                          : "text-neutral-700 hover:bg-neutral-100"
                       }`}
+                      aria-current={activeTab === tab.id ? "page" : undefined}
                     >
                       <Icon className="w-5 h-5 mr-3" />
                       {tab.label}
@@ -103,17 +104,17 @@ export default function SettingsPage() {
               {/* Profile Settings */}
               {activeTab === "profile" && (
                 <div className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                  <h2 className="text-xl font-semibold text-neutral-900 mb-6">
                     Profile Information
                   </h2>
 
                   {/* Avatar */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
                       Profile Picture
                     </label>
                     <div className="flex items-center space-x-4">
-                      <div className="w-20 h-20 bg-gray-300 rounded-full overflow-hidden">
+                      <div className="w-20 h-20 bg-neutral-300 rounded-full overflow-hidden">
                         {profileData.avatarUrl ? (
                           <img
                             src={profileData.avatarUrl}
@@ -121,16 +122,16 @@ export default function SettingsPage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gray-400 flex items-center justify-center text-white text-2xl">
+                          <div className="w-full h-full bg-neutral-400 flex items-center justify-center text-white text-2xl">
                             {profileData.username.charAt(0).toUpperCase()}
                           </div>
                         )}
                       </div>
                       <div>
-                        <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        <button className="px-4 py-2 bg-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-300 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400">
                           Change Photo
                         </button>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-neutral-500 mt-1">
                           JPG, PNG up to 10MB
                         </p>
                       </div>
@@ -139,7 +140,7 @@ export default function SettingsPage() {
 
                   {/* Username */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
                       Username
                     </label>
                     <input
@@ -151,13 +152,13 @@ export default function SettingsPage() {
                           username: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
                     />
                   </div>
 
                   {/* Bio */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
                       Bio
                     </label>
                     <textarea
@@ -166,7 +167,7 @@ export default function SettingsPage() {
                         setProfileData({ ...profileData, bio: e.target.value })
                       }
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
                       placeholder="Tell people about yourself..."
                     />
                   </div>
@@ -176,7 +177,7 @@ export default function SettingsPage() {
               {/* Privacy Settings */}
               {activeTab === "privacy" && (
                 <div className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                  <h2 className="text-xl font-semibold text-neutral-900 mb-6">
                     Privacy & Safety
                   </h2>
 
@@ -184,10 +185,10 @@ export default function SettingsPage() {
                     {/* Private Account */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           Private Account
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           Only approved followers can see your content
                         </p>
                       </div>
@@ -202,18 +203,19 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={privacySettings.isPrivateAccount}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Allow Duets */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           Allow Duets
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           Let others duet with your videos
                         </p>
                       </div>
@@ -228,18 +230,19 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={privacySettings.allowDuets}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Allow Comments */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           Allow Comments
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           Let others comment on your videos
                         </p>
                       </div>
@@ -254,18 +257,19 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={privacySettings.allowComments}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Allow Direct Messages */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           Allow Direct Messages
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           Let others send you direct messages
                         </p>
                       </div>
@@ -280,8 +284,9 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={privacySettings.allowDirectMessages}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
                   </div>
@@ -291,7 +296,7 @@ export default function SettingsPage() {
               {/* Notification Settings */}
               {activeTab === "notifications" && (
                 <div className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                  <h2 className="text-xl font-semibold text-neutral-900 mb-6">
                     Notification Preferences
                   </h2>
 
@@ -299,10 +304,10 @@ export default function SettingsPage() {
                     {/* Push Notifications */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           Push Notifications
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           Receive notifications on your device
                         </p>
                       </div>
@@ -317,18 +322,19 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={notificationSettings.pushNotifications}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Email Notifications */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           Email Notifications
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           Receive notifications via email
                         </p>
                       </div>
@@ -343,18 +349,19 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={notificationSettings.emailNotifications}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Follow Notifications */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-neutral-900">
                           New Followers
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral-500">
                           When someone follows you
                         </p>
                       </div>
@@ -369,16 +376,17 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={notificationSettings.followNotifications}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Like Notifications */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">Likes</h3>
-                        <p className="text-sm text-gray-500">
+                        <h3 className="font-medium text-neutral-900">Likes</h3>
+                        <p className="text-sm text-neutral-500">
                           When someone likes your videos
                         </p>
                       </div>
@@ -393,16 +401,17 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={notificationSettings.likeNotifications}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
 
                     {/* Comment Notifications */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900">Comments</h3>
-                        <p className="text-sm text-gray-500">
+                        <h3 className="font-medium text-neutral-900">Comments</h3>
+                        <p className="text-sm text-neutral-500">
                           When someone comments on your videos
                         </p>
                       </div>
@@ -417,8 +426,9 @@ export default function SettingsPage() {
                             })
                           }
                           className="sr-only peer"
+                          aria-checked={notificationSettings.commentNotifications}
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-neutral-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neutral-600"></div>
                       </label>
                     </div>
                   </div>
@@ -428,30 +438,31 @@ export default function SettingsPage() {
               {/* Account Settings */}
               {activeTab === "account" && (
                 <div className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                  <h2 className="text-xl font-semibold text-neutral-900 mb-6">
                     Account Management
                   </h2>
 
                   <div className="space-y-6">
                     {/* Change Password */}
-                    <div className="border border-gray-200 rounded-lg p-4">
-                      <h3 className="font-medium text-gray-900 mb-4">
+                    <div className="border border-neutral-200 rounded-lg p-4">
+                      <h3 className="font-medium text-neutral-900 mb-4">
                         Change Password
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-neutral-700 mb-2">
                             Current Password
                           </label>
                           <div className="relative">
                             <input
                               type={showPassword ? "text" : "password"}
-                              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                              className="w-full px-3 py-2 pr-10 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
                             />
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+                              className="absolute right-2 top-2 text-neutral-500 hover:text-neutral-700 focus:outline-none"
+                              aria-label={showPassword ? "Hide password" : "Show password"}
                             >
                               {showPassword ? (
                                 <EyeSlashIcon className="w-5 h-5" />
@@ -462,41 +473,41 @@ export default function SettingsPage() {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-neutral-700 mb-2">
                             New Password
                           </label>
                           <input
                             type="password"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-neutral-700 mb-2">
                             Confirm New Password
                           </label>
                           <input
                             type="password"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
                           />
                         </div>
-                        <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        <button className="px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400">
                           Update Password
                         </button>
                       </div>
                     </div>
 
                     {/* Delete Account */}
-                    <div className="border border-red-200 rounded-lg p-4 bg-red-50">
-                      <h3 className="font-medium text-red-900 mb-2">
+                    <div className="border border-neutral-200 rounded-lg p-4 bg-neutral-50">
+                      <h3 className="font-medium text-neutral-900 mb-2">
                         Delete Account
                       </h3>
-                      <p className="text-sm text-red-700 mb-4">
+                      <p className="text-sm text-neutral-700 mb-4">
                         Once you delete your account, there is no going back.
                         Please be certain.
                       </p>
                       <button
                         onClick={handleDeleteAccount}
-                        className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400"
                       >
                         <TrashIcon className="w-4 h-4 mr-2" />
                         Delete Account
@@ -507,14 +518,14 @@ export default function SettingsPage() {
               )}
 
               {/* Save Button */}
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+              <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-200 rounded-b-lg">
                 <div className="flex justify-end space-x-4">
-                  <button className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                  <button className="px-4 py-2 text-neutral-700 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400">
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    className="px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400"
                   >
                     Save Changes
                   </button>

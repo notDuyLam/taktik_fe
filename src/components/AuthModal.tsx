@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -75,20 +77,22 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           <h2 className="text-2xl font-bold text-gray-900">
             {isLogin ? "Sign In" : "Sign Up"}
           </h2>
-          <button
+          <Button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-1 rounded-full"
+            variant="ghost"
           >
             <XMarkIcon className="w-6 h-6" />
-          </button>
+          </Button>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
+            <Alert variant="default" className="mb-4">
+              <AlertTitle>Authentication Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
           <div className="space-y-4">
@@ -107,7 +111,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                 value={formData.username}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 placeholder="Enter your username"
               />
             </div>
@@ -128,7 +132,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                 onChange={handleInputChange}
                 required
                 minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 placeholder="Enter your password"
               />
               {!isLogin && (
@@ -153,7 +157,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                   value={formData.bio}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
                   placeholder="Tell us about yourself"
                 />
               </div>
@@ -174,7 +178,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                   name="avatarUrl"
                   value={formData.avatarUrl}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   placeholder="https://example.com/avatar.jpg"
                 />
               </div>
@@ -182,25 +186,28 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           </div>
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="w-full mt-6"
+            variant="default"
           >
             {loading ? "Please wait..." : isLogin ? "Sign In" : "Sign Up"}
-          </button>
+          </Button>
         </form>
 
         {/* Toggle Mode */}
         <div className="px-6 pb-6">
           <p className="text-center text-gray-600">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button
+            <Button
+              type="button"
               onClick={toggleMode}
-              className="text-red-500 hover:text-red-600 font-medium"
+              variant="link"
+              className="font-medium text-gray-900 px-1 py-0 align-baseline"
             >
               {isLogin ? "Sign up" : "Sign in"}
-            </button>
+            </Button>
           </p>
         </div>
       </div>

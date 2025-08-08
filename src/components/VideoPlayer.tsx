@@ -15,6 +15,10 @@ import {
   UserMinusIcon,
 } from "@heroicons/react/24/solid";
 import CommentSection from "@/components/CommentSection";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface VideoPlayerProps {
   video: Video;
@@ -208,7 +212,7 @@ export default function VideoPlayer({
       {/* Video */}
       <video
         ref={videoRef}
-        className="w-full h-full object-cover cursor-pointer"
+        className="w-full h-full object-contain cursor-pointer"
         src={video.videoUrl}
         loop
         muted
@@ -228,112 +232,107 @@ export default function VideoPlayer({
       )}
 
       {/* Video info */}
-      <div className="absolute bottom-0 left-0 right-16 p-4 bg-gradient-to-t from-black to-transparent">
-        <div className="mb-2">
-          <h3 className="text-white text-lg font-semibold">{video.title}</h3>
-          {video.description && (
-            <p className="text-white text-sm opacity-90 mt-1">
-              {video.description}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center">
-          <div className="w-10 h-10 bg-gray-400 rounded-full mr-3 overflow-hidden">
-            {video.user?.avatarUrl ? (
-              <img
-                src={video.user.avatarUrl}
-                alt={video.user.username}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-500 flex items-center justify-center text-white text-xs">
-                {video.user?.username.charAt(0).toUpperCase() || "U"}
-              </div>
+      <Card className="absolute bottom-0 left-0 right-16 p-4 bg-gradient-to-t from-black to-transparent">
+        <CardContent className="p-0">
+          <div className="mb-2">
+            <h3 className="text-white text-lg font-semibold">{video.title}</h3>
+            {video.description && (
+              <p className="text-white text-sm opacity-90 mt-1">
+                {video.description}
+              </p>
             )}
           </div>
-          <span className="text-white font-medium">
-            {video.user?.username || "Unknown User"}
-          </span>
-          {user && video.user && user.id !== video.user.id && (
-            <button
-              onClick={handleFollow}
-              className="ml-3 px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600"
-            >
-              {isFollowing ? "Following" : "Follow"}
-            </button>
-          )}
-        </div>
-      </div>
+          <div className="flex items-center">
+            <Avatar className="w-10 h-10 mr-3">
+              <AvatarImage src={video.user?.avatarUrl} alt={video.user?.username} />
+              <AvatarFallback>{video.user?.username?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+            </Avatar>
+            <span className="text-white font-medium">
+              {video.user?.username || "Unknown User"}
+            </span>
+            {user && video.user && user.id !== video.user.id && (
+              <Button
+                onClick={handleFollow}
+                className={`ml-3 px-4 py-1 text-sm rounded-full bg-white/80 text-gray-900 shadow-sm hover:bg-white focus:bg-white/90 focus:outline-none transition-colors border-none ${isFollowing ? 'font-semibold' : ''}`}
+              >
+                {isFollowing ? "Following" : "Follow"}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Action buttons */}
       <div className="absolute right-4 bottom-20 flex flex-col items-center space-y-6">
         {/* Like button */}
         <div className="flex flex-col items-center">
-          <button
+          <Button
             onClick={handleLike}
-            className="w-12 h-12 flex items-center justify-center text-white hover:scale-110 transition-transform"
+            className="w-12 h-12 flex items-center justify-center"
+            variant={isLiked ? "default" : "outline"}
           >
             {isLiked ? (
-              <HeartSolidIcon className="w-8 h-8 text-red-500" />
+              <HeartSolidIcon className="w-8 h-8" />
             ) : (
               <HeartIcon className="w-8 h-8" />
             )}
-          </button>
+          </Button>
           <span className="text-white text-xs mt-1">
             {formatCount(stats.likeCount)}
           </span>
         </div>
-
         {/* Comment button */}
         <div className="flex flex-col items-center">
-          <button
+          <Button
             onClick={() => setShowComments(true)}
-            className="w-12 h-12 flex items-center justify-center text-white hover:scale-110 transition-transform"
+            className="w-12 h-12 flex items-center justify-center"
+            variant="outline"
           >
             <ChatBubbleOvalLeftIcon className="w-8 h-8" />
-          </button>
+          </Button>
           <span className="text-white text-xs mt-1">
             {formatCount(stats.commentCount)}
           </span>
         </div>
-
         {/* Share button */}
         <div className="flex flex-col items-center">
-          <button
+          <Button
             onClick={handleShare}
-            className="w-12 h-12 flex items-center justify-center text-white hover:scale-110 transition-transform"
+            className="w-12 h-12 flex items-center justify-center"
+            variant="outline"
           >
             <ShareIcon className="w-8 h-8" />
-          </button>
+          </Button>
           <span className="text-white text-xs mt-1">Share</span>
         </div>
-
         {/* Follow button (circular) */}
         {user && video.user && user.id !== video.user.id && (
-          <button
+          <Button
             onClick={handleFollow}
-            className="w-12 h-12 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+            className="w-12 h-12 flex items-center justify-center rounded-full"
+            variant={isFollowing ? "secondary" : "default"}
           >
             {isFollowing ? (
               <UserMinusIcon className="w-6 h-6" />
             ) : (
               <UserPlusIcon className="w-6 h-6" />
             )}
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Comments Section */}
-      {showComments && (
-        <CommentSection
-          videoId={video.id}
-          onClose={() => setShowComments(false)}
-          onCommentCountChange={(count: number) =>
-            setStats((prev) => ({ ...prev, commentCount: count }))
-          }
-        />
-      )}
+      <Dialog open={showComments} onOpenChange={setShowComments}>
+        <DialogContent>
+          <CommentSection
+            videoId={video.id}
+            onClose={() => setShowComments(false)}
+            onCommentCountChange={(count: number) =>
+              setStats((prev) => ({ ...prev, commentCount: count }))
+            }
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
