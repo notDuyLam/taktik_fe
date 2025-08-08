@@ -239,7 +239,7 @@ export default function VideoPlayer({
       }}
     >
       {/* Constrain to 9:16 frame centered on the screen */}
-      <div className="relative h-full aspect-[9/16] mx-auto bg-black">
+      <div className="relative h-full aspect-[9/16] mx-auto bg-black rounded-xl md:rounded-2xl overflow-hidden">
         {/* Video */}
         <video
           ref={videoRef}
