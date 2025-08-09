@@ -9,6 +9,7 @@ import {
   UserPlusIcon,
   ChatBubbleOvalLeftIcon,
   Cog6ToothIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import { UserMinusIcon } from "@heroicons/react/24/solid";
 import Sidebar from "@/components/Sidebar";
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (username) {
@@ -99,6 +101,36 @@ export default function ProfilePage() {
   const handleMessage = () => {
     if (!currentUser || !user) return;
     router.push(`/messages?user=${user.username}`);
+  };
+
+  const handleVideoUpload = async () => {
+    // TODO: Implement video upload functionality
+    // This will connect to backend upload API route when ready
+    try {
+      setUploading(true);
+
+      // TODO: Backend API integration needed
+      // Example implementation (to be completed when backend is ready):
+      // const formData = new FormData();
+      // formData.append('video', selectedFile);
+      // formData.append('title', videoTitle);
+      // formData.append('description', videoDescription);
+      //
+      // const response = await videosAPI.uploadVideo(formData);
+      //
+      // if (response.success) {
+      //   // Refresh videos list
+      //   const userVideos = await videosAPI.getVideosByUser(user.id);
+      //   setVideos(userVideos);
+      // }
+
+      console.log("Upload video functionality - Backend API needed");
+      alert("Upload feature will be implemented when backend route is ready!");
+    } catch (error) {
+      console.error("Error uploading video:", error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleVideoClick = (videoId: string) => {
@@ -211,13 +243,23 @@ export default function ProfilePage() {
               {/* Action Buttons */}
               <div className="flex justify-center sm:justify-start space-x-3">
                 {isOwnProfile ? (
-                  <button
-                    onClick={() => router.push("/settings")}
-                    className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    <Cog6ToothIcon className="w-4 h-4 mr-2" />
-                    Edit Profile
-                  </button>
+                  <>
+                    <button
+                      onClick={() => router.push("/settings")}
+                      className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      <Cog6ToothIcon className="w-4 h-4 mr-2" />
+                      Edit Profile
+                    </button>
+                    <button
+                      onClick={handleVideoUpload}
+                      disabled={uploading}
+                      className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <PlusIcon className="w-4 h-4 mr-2" />
+                      {uploading ? "Uploading..." : "Upload Video"}
+                    </button>
+                  </>
                 ) : currentUser ? (
                   <>
                     <button

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Video } from '@/types';
-import { videosAPI } from '@/lib/api';
-import VideoPlayer from '@/components/VideoPlayer';
-import Sidebar from '@/components/Sidebar';
-import AuthModal from '@/components/AuthModal';
+import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Video } from "@/types";
+import { videosAPI } from "@/lib/api";
+import VideoPlayer from "@/components/VideoPlayer";
+import Sidebar from "@/components/Sidebar";
+import AuthModal from "@/components/AuthModal";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -32,7 +32,7 @@ export default function Home() {
       if (!user) return;
       setVideosLoading(true);
       const feedVideos = await videosAPI.getFeedForUser(user.id);
-      
+
       // If user has no feed, show trending videos
       if (feedVideos.length === 0) {
         const trendingVideos = await videosAPI.getTrendingVideos();
@@ -41,7 +41,7 @@ export default function Home() {
         setVideos(feedVideos);
       }
     } catch (error) {
-      console.error('Error loading user feed:', error);
+      console.error("Error loading user feed:", error);
       // Fallback to trending videos
       loadTrendingVideos();
     } finally {
@@ -55,7 +55,7 @@ export default function Home() {
       const trendingVideos = await videosAPI.getTrendingVideos();
       setVideos(trendingVideos);
     } catch (error) {
-      console.error('Error loading trending videos:', error);
+      console.error("Error loading trending videos:", error);
     } finally {
       setVideosLoading(false);
     }
@@ -67,10 +67,10 @@ export default function Home() {
     }
   };
 
-  const handleScroll = (direction: 'up' | 'down') => {
-    if (direction === 'up' && currentVideoIndex > 0) {
+  const handleScroll = (direction: "up" | "down") => {
+    if (direction === "up" && currentVideoIndex > 0) {
       setCurrentVideoIndex(currentVideoIndex - 1);
-    } else if (direction === 'down' && currentVideoIndex < videos.length - 1) {
+    } else if (direction === "down" && currentVideoIndex < videos.length - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
     }
   };
@@ -85,6 +85,9 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen bg-black">
+      {/* Sidebar */}
+      <Sidebar />
+
       {/* Main video feed */}
       <div className="flex-1 relative">
         {videos.length > 0 ? (
@@ -99,10 +102,9 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-2xl mb-4">No videos found</h2>
               <p className="text-gray-400">
-                {!user 
-                  ? 'Sign up to see personalized content!' 
-                  : 'Follow some users to see their videos in your feed!'
-                }
+                {!user
+                  ? "Sign up to see personalized content!"
+                  : "Follow some users to see their videos in your feed!"}
               </p>
               {!user && (
                 <button
@@ -117,13 +119,8 @@ export default function Home() {
         )}
       </div>
 
-      {/* Sidebar */}
-      <Sidebar />
-
       {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal onClose={() => setShowAuthModal(false)} />
-      )}
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </div>
   );
 }
