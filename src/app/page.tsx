@@ -25,8 +25,11 @@ export default function Home() {
   const [videosLoading, setVideosLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedVideoLoading, setSelectedVideoLoading] = useState(false);
-  const [initialSelectedId, setInitialSelectedId] = useState<string | null>(null);
-  const [initialSelectedVideo, setInitialSelectedVideo] = useState<Video | null>(null);
+  const [initialSelectedId, setInitialSelectedId] = useState<string | null>(
+    null
+  );
+  const [initialSelectedVideo, setInitialSelectedVideo] =
+    useState<Video | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const videoIdParam = searchParams.get("video");
@@ -122,8 +125,6 @@ export default function Home() {
 
   const handleScroll = (direction: "up" | "down") => {
     if (direction === "up" && currentVideoIndex > 0) {
-  const handleScroll = (direction: "up" | "down") => {
-    if (direction === "up" && currentVideoIndex > 0) {
       setCurrentVideoIndex(currentVideoIndex - 1);
     } else if (direction === "down" && currentVideoIndex < videos.length - 1) {
     } else if (direction === "down" && currentVideoIndex < videos.length - 1) {
@@ -167,11 +168,13 @@ export default function Home() {
   }
 
   return (
-      <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
       <Sidebar />
       {/* Main video feed */}
-      <div className={`flex-1 relative ${selectedVideo ? "" : "overflow-y-auto"}`}>
+      <div
+        className={`flex-1 relative ${selectedVideo ? "" : "overflow-y-auto"}`}
+      >
         {/* Selected video at the top if present */}
         {selectedVideoLoading ? (
           <div className="flex flex-col items-center justify-center h-96 text-foreground">
@@ -184,8 +187,13 @@ export default function Home() {
               video={selectedVideo}
               onAuthRequired={() => setShowAuthModal(true)}
               onVideoEnd={() => {
-                const currentIndex = displayVideos.findIndex((v) => v.id === selectedVideo.id);
-                if (currentIndex > -1 && currentIndex < displayVideos.length - 1) {
+                const currentIndex = displayVideos.findIndex(
+                  (v) => v.id === selectedVideo.id
+                );
+                if (
+                  currentIndex > -1 &&
+                  currentIndex < displayVideos.length - 1
+                ) {
                   const nextVideo = displayVideos[currentIndex + 1];
                   router.push(`/?video=${nextVideo.id}`);
                 } else {
@@ -194,14 +202,23 @@ export default function Home() {
                 }
               }}
               onScroll={(direction) => {
-                const currentIndex = displayVideos.findIndex((v) => v.id === selectedVideo.id);
+                const currentIndex = displayVideos.findIndex(
+                  (v) => v.id === selectedVideo.id
+                );
                 let newIndex = currentIndex;
-                if (direction === "down" && currentIndex < displayVideos.length - 1) {
-                  newIndex = currentIndex + 1;  
+                if (
+                  direction === "down" &&
+                  currentIndex < displayVideos.length - 1
+                ) {
+                  newIndex = currentIndex + 1;
                 } else if (direction === "up" && currentIndex > 0) {
                   newIndex = currentIndex - 1;
                 }
-                if (newIndex !== currentIndex && newIndex >= 0 && newIndex < displayVideos.length) {
+                if (
+                  newIndex !== currentIndex &&
+                  newIndex >= 0 &&
+                  newIndex < displayVideos.length
+                ) {
                   const nextVideo = displayVideos[newIndex];
                   router.push(`/?video=${nextVideo.id}`);
                 }
@@ -216,31 +233,32 @@ export default function Home() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 px-4 pb-8">
               {videos.map((video) => (
                 <Card
-                key={video.id}
-                className="w-full max-w-[240px] aspect-[9/16] relative cursor-pointer overflow-hidden rounded-md hover:scale-105 transition-transform duration-200 shadow-md"
-                onClick={() => handleTrendingVideoClick(video.id)}
-              >
-                {video.thumbnailUrl ? (
-                  <>
-                    <img
-                      src={video.thumbnailUrl}
-                      alt={video.title}
-                      className="w-full h-full object-cover absolute inset-0"
-                    />
-                    <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-2 z-10">
-                      <div className="text-white text-xs font-semibold truncate">
-                        {video.title}
+                  key={video.id}
+                  className="w-full max-w-[240px] aspect-[9/16] relative cursor-pointer overflow-hidden rounded-md hover:scale-105 transition-transform duration-200 shadow-md"
+                  onClick={() => handleTrendingVideoClick(video.id)}
+                >
+                  {video.thumbnailUrl ? (
+                    <>
+                      <img
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        className="w-full h-full object-cover absolute inset-0"
+                      />
+                      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-2 z-10">
+                        <div className="text-white text-xs font-semibold truncate">
+                          {video.title}
+                        </div>
+                        <div className="text-gray-300 text-xs">
+                          {video.viewCount} views
+                        </div>
                       </div>
-                      <div className="text-gray-300 text-xs">{video.viewCount} views</div>
+                    </>
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full bg-muted text-muted-foreground text-xs text-center p-2">
+                      {video.title}
                     </div>
-                  </>
-                ) : (
-                  <div className="flex items-center justify-center w-full h-full bg-muted text-muted-foreground text-xs text-center p-2">
-                    {video.title}
-                  </div>
-                )}
-              </Card>
-              
+                  )}
+                </Card>
               ))}
             </div>
           </div>
@@ -251,7 +269,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
                   <span className="text-2xl">📭</span>
                 </div>
-                <h3 className="mt-4 text-xl font-semibold text-foreground">No videos found</h3>
+                <h3 className="mt-4 text-xl font-semibold text-foreground">
+                  No videos found
+                </h3>
                 <p className="mt-2 text-muted-foreground">
                   {!user
                     ? "Create an account to get a personalized feed."
