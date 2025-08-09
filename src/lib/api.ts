@@ -30,6 +30,14 @@ const getAuthHeaders = () => {
   };
 };
 
+// Helper function to get auth headers for form data
+const getAuthHeadersFormData = () => {
+  const token = localStorage.getItem("token");
+  return {
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
+
 // Generic API request function
 async function apiRequest<T>(
   endpoint: string,
@@ -47,7 +55,31 @@ async function apiRequest<T>(
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
 
-  return response.json();
+  // Handle no-content responses (e.g., 204) or empty bodies safely
+  if (response.status === 204 || response.status === 205) {
+    return undefined as unknown as T;
+  }
+
+  const contentLength = response.headers.get("content-length");
+  if (contentLength === "0") {
+    return undefined as unknown as T;
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    return (await response.json()) as T;
+  }
+
+  // Fallback: try to read text; if empty, return undefined; if not JSON, return text
+  const text = await response.text();
+  if (!text) {
+    return undefined as unknown as T;
+  }
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return text as unknown as T;
+  }
 }
 
 // Auth API
@@ -148,6 +180,21 @@ export const videosAPI = {
 
   getPopularVideos: (minViews: number = 1000): Promise<Video[]> =>
     apiRequest(`/api/videos/popular?minViews=${minViews}`),
+
+  uploadVideo: async (formData: FormData): Promise<Video> => {
+    const url = `${API_BASE_URL}/api/videos/upload`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: getAuthHeadersFormData(),
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  },
 };
 
 // Comments API
